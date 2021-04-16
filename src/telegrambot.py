@@ -2,6 +2,8 @@ from src import posts_utils
 from telebot import TeleBot
 
 
+
+
 class PostsRedirector:
     def __init__(self, token):
         self.__bot = TeleBot(token)

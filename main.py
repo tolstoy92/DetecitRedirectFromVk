@@ -1,5 +1,7 @@
-import os
 from time import sleep
+import secrets
+from telebot import TeleBot
+from threading import Thread
 
 from src import posts_utils
 from src.telegrambot import PostsRedirector
@@ -9,12 +11,12 @@ TIMEOUT = 0.01
 PUBLIC_URL = 'https://m.vk.com/detectit_spb'
 LAST_SENDED_POST_NUM = -1
 
-BOT_TOKEN = os.environ['detectit_bot_token']
-CHAT_ID = os.environ['detectit_chat_id']
-SLEEP_TIME = 3
+BOT_TOKEN = secrets.tg_bot_token
+CHAT_ID = "-1001373706281"
+SLEEP_TIME = 60
 
 
-posts_redirector = PostsRedirector(BOT_TOKEN)
+posts_redirector = TeleBot(BOT_TOKEN)
 
 
 def main():
@@ -33,11 +35,20 @@ def main():
         if sorted_posts_and_ids:
             for post, post_id, post_num in sorted_posts_and_ids:
                 message = posts_utils.create_msg(post, post_id)
-                posts_redirector.send_msg(CHAT_ID, message)
+                posts_redirector.send_message(CHAT_ID, message)
                 last_sended_post_num = post_num
-                
         sleep(SLEEP_TIME)
-            
 
-if __name__ == '__main__':
+
+@posts_redirector.message_handler(func=lambda x: x.text not in ['start', '/start'])
+def echo(message):
+    posts_redirector.reply_to(message, "I'm still alive!")
+
+@posts_redirector.message_handler(commands=['start'])
+def main_loop(message):
+    print(message.text)
     main()
+
+            
+if __name__ == '__main__':
+    posts_redirector.polling(interval=10)
