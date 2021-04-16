@@ -65,11 +65,6 @@ def send_status(message):
         f'started: {started}\nlast_post_url: {last_sended_post_url}'
     posts_redirector.reply_to(message, status_str)
 
-
-@posts_redirector.message_handler(func=lambda x: x[0] != '/')
-def echo(message):
-    posts_redirector.reply_to(message, "I'm still alive!")
-
             
 if __name__ == '__main__':
     posts_redirector.polling(interval=3)
