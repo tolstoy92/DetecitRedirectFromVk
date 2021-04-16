@@ -1,7 +1,7 @@
 from time import sleep
 import secrets
 from telebot import TeleBot
-from threading import Thread
+# from threading import Thread
 
 from src import posts_utils
 from src.telegrambot import PostsRedirector

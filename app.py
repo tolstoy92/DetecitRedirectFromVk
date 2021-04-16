@@ -27,7 +27,7 @@ def main():
         html = posts_utils.get_html(PUBLIC_URL)
         posts = posts_utils.get_wall_posts(html)
         posts_ids = [posts_utils.get_post_id(post) for post in posts]
-        posts_nums = [int(split('_')[-1]) for post_id in posts_ids]
+        posts_nums = [int(post_id.split('_')[-1]) for post_id in posts_ids]
         zipped = zip(posts_nums, posts, posts_ids)
         sorted_posts_and_ids = []
         for post_num, post, post_id in sorted(zipped):
