@@ -12,7 +12,6 @@ from src import posts_utils
 
 TIMEOUT = 0.01
 PUBLIC_URL = 'https://m.vk.com/detectit_spb'
-LAST_SENDED_POST_NUM = -1
 
 BOT_TOKEN = os.environ['redirect_bot_token']
 CHAT_ID = os.environ['detectit_chat_id']
@@ -20,9 +19,14 @@ SLEEP_TIME = 5
 
 posts_redirector = TeleBot(BOT_TOKEN)
 
+started = False
+last_sended_post_num = -1
+last_sended_post_url = -1
+
 
 def main():
-    last_sended_post_num = -1
+    global started, last_sended_post_num, last_sended_post_url
+    started = True
     while True:
         html = posts_utils.get_html(PUBLIC_URL)
         posts = posts_utils.get_wall_posts(html)
@@ -38,19 +42,33 @@ def main():
             for post, post_id, post_num in sorted_posts_and_ids:
                 message = posts_utils.create_msg(post, post_id)
                 posts_redirector.send_message(CHAT_ID, message)
+                post_url = posts_utils.get_post_url(post_id)
+                last_sended_post_url = post_url
                 last_sended_post_num = post_num
         sleep(SLEEP_TIME)
 
 
-@posts_redirector.message_handler(func=lambda x: x.text not in ['start', '/start'])
-def echo(message):
-    posts_redirector.reply_to(message, "I'm still alive!")
-
-
 @posts_redirector.message_handler(commands=['start'])
 def main_loop(message):
-    posts_redirector.reply_to(message, 'Started!')
-    main()
+    global started
+    if started:
+        posts_redirector.reply_to(message, 'Already started!')
+    else:
+        posts_redirector.reply_to(message, 'Just started!')
+        main()
+
+
+@posts_redirector.message_handler(commands=['status'])
+def send_status(message):
+    global started, last_sended_post_url
+    status_str = \
+        f'started: {started}\nlast_post_url: {last_sended_post_url}'
+    posts_redirector.reply_to(message, status_str)
+
+
+@posts_redirector.message_handler(func=lambda x: x[0] != '/')
+def echo(message):
+    posts_redirector.reply_to(message, "I'm still alive!")
 
             
 if __name__ == '__main__':
