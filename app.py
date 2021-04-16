@@ -54,4 +54,4 @@ def main_loop(message):
 
             
 if __name__ == '__main__':
-    posts_redirector.polling(interval=10)
+    posts_redirector.polling(interval=3)
