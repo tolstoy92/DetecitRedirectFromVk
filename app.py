@@ -1,3 +1,8 @@
+import logging
+
+logfile = '/home/pi/error.log'
+logging.basicConfig(filename=logfile, level=logging.DEBUG)
+
 import os
 from urllib import request
 from bs4 import BeautifulSoup as bs
@@ -72,5 +77,4 @@ try:
         posts_redirector.send_message(OWNER_ID, 'Waked up! =)')
         posts_redirector.polling(interval=3)
 except Exception as e:
-    with open('/home/pi/error.log', 'w') as log_file:
-        log_file.write(str(e))
+    logging.debug(e)
