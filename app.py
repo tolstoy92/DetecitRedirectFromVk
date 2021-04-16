@@ -15,6 +15,7 @@ PUBLIC_URL = 'https://m.vk.com/detectit_spb'
 
 BOT_TOKEN = os.environ['redirect_bot_token']
 CHAT_ID = os.environ['detectit_chat_id']
+OWNER_ID = os.environ['telegram_owner_id']
 SLEEP_TIME = 5
 
 posts_redirector = TeleBot(BOT_TOKEN)
@@ -67,4 +68,5 @@ def send_status(message):
 
             
 if __name__ == '__main__':
+    posts_redirector.send_message(OWNER_ID, 'Waked up! =)')
     posts_redirector.polling(interval=3)
